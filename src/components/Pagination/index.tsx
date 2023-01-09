@@ -1,7 +1,41 @@
 import { Stack, Box } from "@chakra-ui/react";
 import { PaginationItem } from "./PaginationItem";
 
-export default function Pagination() {
+interface PaginationProps {
+  totalCountOfRegisters: number;
+  registersPerPage?: number;
+  currentPage?: number;
+  onPageChange: (page: number) => void;
+}
+
+const siblingsCount = 1;
+
+function generatePagesArray(from: number, to: number) {
+  return [...new Array(to - from)]
+    .map((_, index) => {
+      return from + index + 1;
+    })
+    .filter((page) => page > 0);
+}
+
+export default function Pagination({
+  totalCountOfRegisters,
+  registersPerPage = 10,
+  currentPage = 1,
+  onPageChange,
+}: PaginationProps) {
+  const lastPage = Math.floor(totalCountOfRegisters / registersPerPage);
+  const previousPages =
+    currentPage > 1
+      ? generatePagesArray(currentPage - 1 - siblingsCount, currentPage - 1)
+      : [];
+  const nextPages =
+    currentPage < lastPage
+      ? generatePagesArray(
+        currentPage,
+        Math.min(currentPage + siblingsCount, lastPage)
+      )
+      : [];
   return (
     <Stack
       direction={["column", "row"]}
@@ -14,10 +48,7 @@ export default function Pagination() {
         <strong>0</strong> - <strong>10</strong> de <strong>100</strong>
       </Box>
       <Stack direction="row" spacing="2">
-        <PaginationItem isCurrent={true} number={1} />
-        <PaginationItem number={2} />
-        <PaginationItem number={3} />
-        <PaginationItem number={4} />
+        <PaginationItem number={currentPage} isCurrent />
       </Stack>
     </Stack>
   );
