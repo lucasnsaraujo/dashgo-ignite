@@ -14,18 +14,17 @@ import {
   Text,
   useBreakpointValue,
   IconButton,
-  Spinner
+  Spinner,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { useState } from "react";
 import { RiAddLine, RiPencilLine, RiRefreshLine } from "react-icons/ri";
 import { Header } from "../../components/Header";
 import Pagination from "../../components/Pagination";
 import { Sidebar } from "../../components/Sidebar";
 import { useUsers } from "../../services/hooks/useUsers";
 
-
 export default function UserList() {
-
   const { data, isLoading, error, isFetching, refetch } = useUsers();
   const isWideVersion = useBreakpointValue({
     base: false,
@@ -36,6 +35,9 @@ export default function UserList() {
     base: false,
     sm: true,
   });
+
+  const [page, setPage] = useState(1);
+
   return (
     <Box>
       <Header></Header>
@@ -45,10 +47,18 @@ export default function UserList() {
           <Flex mb="8" justify="space-between" align="center">
             <Heading fontSize="large" fontWeight="normal">
               Usuários
-              {!isLoading && isFetching && <Spinner size="sm" color="gray.500" ml="4" />}
+              {!isLoading && isFetching && (
+                <Spinner size="sm" color="gray.500" ml="4" />
+              )}
             </Heading>
             <Box>
-              <Button size="sm" fontSize="sm" colorScheme="facebook" mr="3" onClick={() => refetch()}>
+              <Button
+                size="sm"
+                fontSize="sm"
+                colorScheme="facebook"
+                mr="3"
+                onClick={() => refetch()}
+              >
                 <Icon as={RiRefreshLine} fontSize="20" />
               </Button>
               <Link href="/users/create" passHref>
@@ -68,12 +78,12 @@ export default function UserList() {
             <Flex justify="center">
               <Spinner />
             </Flex>
-          ) : error ?
-            (
-              <Flex justify="center">
-                <Text>Falha ao obter os dados dos usuários.</Text>
-              </Flex>
-            ) : <>
+          ) : error ? (
+            <Flex justify="center">
+              <Text>Falha ao obter os dados dos usuários.</Text>
+            </Flex>
+          ) : (
+            <>
               <Table colorScheme="whiteAlpha">
                 <Thead>
                   <Tr>
@@ -86,8 +96,8 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data.map(user => (
-                    <Tr>
+                  {data?.map((user) => (
+                    <Tr key={user.id}>
                       <Td px={["1", "4", "6"]}>
                         <Checkbox colorScheme="pink" />
                       </Td>
@@ -125,9 +135,13 @@ export default function UserList() {
                   ))}
                 </Tbody>
               </Table>
-              <Pagination />
+              <Pagination
+                totalCountOfRegisters={100}
+                currentPage={5}
+                onPageChange={setPage}
+              />
             </>
-          }
+          )}
         </Box>
       </Flex>
     </Box>
