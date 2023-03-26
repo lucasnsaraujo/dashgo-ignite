@@ -25,7 +25,9 @@ import { Sidebar } from "../../components/Sidebar";
 import { useUsers } from "../../services/hooks/useUsers";
 
 export default function UserList() {
-  const { data, isLoading, error, isFetching, refetch } = useUsers();
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, error, isFetching, refetch } = useUsers(page);
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
@@ -35,8 +37,6 @@ export default function UserList() {
     base: false,
     sm: true,
   });
-
-  const [page, setPage] = useState(1);
 
   return (
     <Box>
@@ -96,7 +96,7 @@ export default function UserList() {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {data?.map((user) => (
+                  {data?.users?.map((user) => (
                     <Tr key={user.id}>
                       <Td px={["1", "4", "6"]}>
                         <Checkbox colorScheme="pink" />
@@ -136,8 +136,8 @@ export default function UserList() {
                 </Tbody>
               </Table>
               <Pagination
-                totalCountOfRegisters={100}
-                currentPage={5}
+                totalCountOfRegisters={data?.totalCount!}
+                currentPage={page}
                 onPageChange={setPage}
               />
             </>
