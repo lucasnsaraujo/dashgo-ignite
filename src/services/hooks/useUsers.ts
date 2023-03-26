@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { api } from "../api";
 
 type User = {
-  id: string;
+  id: number;
   name: string;
   email: string;
   created_at: string;
@@ -38,5 +38,5 @@ async function getUsers(page: number): Promise<UsersResponse> {
 
 export const useUsers = (page: number) =>
   useQuery(["users", page], () => getUsers(page), {
-    staleTime: 1000 * 5,
+    staleTime: 1000 * 60 * 10, // 10 minutos,
   });
